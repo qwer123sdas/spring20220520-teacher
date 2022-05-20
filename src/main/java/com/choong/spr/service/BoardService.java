@@ -20,9 +20,9 @@ public class BoardService {
 	@Autowired
 	private ReplyMapper replyMapper;
 	
-	public List<BoardDto> listBoard() {
+	public List<BoardDto> listBoard(String type, String keyword) {
 		// TODO Auto-generated method stub
-		return mapper.selectBoardAll();
+		return mapper.selectBoardAll(type, "%"+keyword+"%");
 	}
 
 	public boolean insertBoard(BoardDto board) {
@@ -47,7 +47,11 @@ public class BoardService {
 		
 		return mapper.deleteBoard(id) == 1;
 	}
-
+	// 검색기능
+	/*	public List<BoardDto> searchBoard(String keyword) {
+			                                 // 와일드 카드
+			return mapper.listBoardByKeyword("%"+keyword+"%");
+		}*/
 }
 
 
