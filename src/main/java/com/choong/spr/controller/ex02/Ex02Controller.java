@@ -41,4 +41,5 @@ public class Ex02Controller {
 	public String method05() {
 		return "/ex03/sub01";
 	}
+	
 }
