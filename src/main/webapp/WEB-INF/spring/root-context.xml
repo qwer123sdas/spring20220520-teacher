@@ -30,11 +30,21 @@
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	
 	<context:component-scan base-package="com.choong.spr.service"></context:component-scan>
+	
+	
+	
 	<!--AOP연습  -->
 	<context:component-scan base-package="com.choong.spr.zerock.service"></context:component-scan>
 	<context:component-scan base-package="com.choong.spr.zerock.aop"></context:component-scan>
 		<!--프록시 처리기 때문에 추가 -->
 	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+		<!-- AOP xml, 사용할 클래스 설정  -->
+		<!--impl로 끝나는 모든 클래스에 대해 포인트컷을 설정한다. -->
+		<!--패키지 아래 자바파일들 중 클래스명이 Impl로 끝나는 파일의 모든 메소드에 대해 적용한다는 의미이다. ~~Impl 클래스의 어떤 메소드든 불려질 때 이것이 실행  -->
+		
+		<!-- ref의 log라는 값은 bean의 id와 일치 -->
+	
+	
 	
 	<!-- transaction 처리 (책 469) -->
 	<bean id="transactionManager" 

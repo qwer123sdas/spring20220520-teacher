@@ -8,9 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.choong.spr.domain.ReplyDto;
 import com.choong.spr.mapper.ReplyMapper;
+import com.choong.spr.zerock.service.SampleService;
 
 @Service
-public class ReplyService {
+public class ReplyService{
 
 	@Autowired
 	private ReplyMapper mapper;
@@ -30,9 +31,9 @@ public class ReplyService {
 		return mapper.updateReply(dto) == 1;
 	}
 
-	public boolean deleteReply(ReplyDto dto) {
+	public boolean deleteReply(int id) {
 		// TODO Auto-generated method stub
-		return mapper.deleteReply(dto.getId()) == 1;
+		return mapper.deleteReply(id) == 1;
 	}
 
 }
