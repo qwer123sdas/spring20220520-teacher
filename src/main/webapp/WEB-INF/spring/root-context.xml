@@ -33,6 +33,7 @@
 	<!--AOP연습  -->
 	<context:component-scan base-package="com.choong.spr.zerock.service"></context:component-scan>
 	<context:component-scan base-package="com.choong.spr.zerock.aop"></context:component-scan>
+		<!--프록시 처리기 때문에 추가 -->
 	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
 	
 	<!-- transaction 처리 (책 469) -->

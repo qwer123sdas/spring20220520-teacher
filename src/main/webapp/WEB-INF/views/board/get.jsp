@@ -68,6 +68,52 @@
 				$("#replyDeleteForm1").submit();
 			}
 		});
+		
+		// 페이지 로딩 후 replyList 가져오는 ajax요청
+		const data = {boardId : ${board.id}};
+		$.ajax({
+			url : '${appRoot}/reply/list',
+			type : 'GET',
+			data : data,
+			success : function(list){
+				//console.log("댓글 가져오기 성공");
+				const replyListElement = $('#replyList1');
+				for(let i = 0; i < list.length; i++){
+					const replyElement = $("<li class='list-group-item'/>");
+					replyElement.html(`
+							<div id="replyDisplayContainer\${list[i].id }">
+								<div class="fw-bold">
+									<i class="fa-solid fa-comment"></i> 
+									\${list[i].prettyInserted}
+								 	<span class="reply-edit-toggle-button badge bg-info text-dark" id="replyEditToggleButton\${list[i].id }" data-reply-id="${reply.id }" >
+								 		<i class="fa-solid fa-pen-to-square"></i>
+							 		</span>
+								 	<span class="reply-delete-button badge bg-danger" data-reply-id="\${list[i].id }">
+								 		<i class="fa-solid fa-trash-can"></i>
+								 	</span>
+								</div>
+						 		\${list[i].content }
+							 	
+							 	
+							</div>
+							
+							<div id="replyEditFormContainer\${list[i].id }" style="display: none;">
+								<form action="${appRoot }/reply/modify" method="post">
+									<div class="input-group">
+										<input type="hidden" name="boardId" value="${board.id }" />
+										<input type="hidden" name="id" value="\${list[i].id }" />
+										<input class="form-control" value="\${list[i].content }" type="text" name="content" required /> 
+										<button class="btn btn-outline-secondary"><i class="fa-solid fa-comment-dots"></i></button>
+									</div>
+								</form>
+							</div>`);  // 백틱에서 EL은 백슬래쉬로 사용 \${list[i]}
+					replyListElement.append(replyElement);
+				}
+			},
+			error : function(){
+				console.log("댓글 가져오기 실패");
+			}
+		})
 	});
 </script>
 
@@ -144,7 +190,8 @@
 			<div class="col">
 				<h3>댓글 ${board.numOfReply } 개</h3>
 			
-				<ul class="list-group">
+				<ul id="replyList1" class="list-group">
+				<%-- 
 					<c:forEach items="${replyList }" var="reply">
 						<li class="list-group-item">
 							<div id="replyDisplayContainer${reply.id }">
@@ -177,6 +224,7 @@
 						 	
 						</li>
 					</c:forEach>
+					--%>
 				</ul>
 			</div>
 		</div>
