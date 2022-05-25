@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.choong.spr.mapper.MemberMapper">
+	<!-- 회원가입 -->
+	<insert id="insertMember" parameterType="com.choong.spr.domain.MemberDto">
+		INSERT INTO Member(id, password, email, nickName)
+		VALUES (#{id}, #{password}, #{email}, #{nickName})
+	</insert>
+	<!-- 아이디 중복여부  -->
+	<select id="countMemberId" resultType="int">
+		SELECT COUNT(id) 
+		FROM Member
+		WHERE id = #{id} 
+	</select>
+	
+	<!--이메일 중복 여부  -->
+	<select id="countMemberEmail" resultType="int">
+		SELECT COUNT(email) 
+		FROM Member
+		WHERE id = #{email} 
+	</select>
+	
+	<!-- 닉네임 중복 여부 -->
+	<select id="countMemberNickName" resultType="int">
+		SELECT COUNT(nickName)
+		FROM Member
+		WHERE nickName=#{nickName}
+	</select>
+	
+	<!-- 회원들정보 가져오기  -->
+	<select id="listMember" resultType="com.choong.spr.domain.MemberDto">
+		SELECT id, password, email, nickName, inserted
+		FROM Member
+		ORDER BY inserted DESC
+	</select>
+	
+	<!-- 특정회원정보 -->
+	<select id="selectMemberById" resultType="com.choong.spr.domain.MemberDto">
+		SELECT id, password, email, nickName, inserted
+		FROM Member
+		WHERE id = #{id}
+	</select>	
+	
+	<!-- 회원삭제 -->
+	<delete id="deleteMemberById">
+		DELETE FROM Member
+		WHERE id = #{id}
+	</delete>
+</mapper>

@@ -109,7 +109,7 @@
 								 	
 								</div>
 								
-								<div id="replyEditFormContainer\${list[i].id }" style="display: none;">
+							 	<div id="replyEditFormContainer\${list[i].id }" style="display: none;">
 									<form action="${appRoot }/reply/modify" method="post">
 										<div class="input-group">
 											<input type="hidden" name="boardId" value="${board.id }" />
@@ -117,8 +117,8 @@
 											<input class="form-control" value="\${list[i].content }" type="text" name="content" required /> 
 											<button data-reply-id="\${list[i].id}" 
 												class="reply-modify-submit btn btn-outline-secondary">
-												<i class="fa-solid fa-comment-dots"></i><
-											/button>
+												<i class="fa-solid fa-comment-dots"></i>
+											</button>
 										</div>
 									</form>
 								</div>`
@@ -137,7 +137,6 @@
 						const formElem = $('#replyEditFormContainer' + id).find('form');
 						//const data = formElem.seriaize(); // put 방식은 controller에서 못받음
 						const data = {
-								boardId : formElem.find("[name=boardId]").val(),
 								id : formElem.find("[name=id]").val(),
 								content : formElem.find("[name=content]").val() 
 						}
@@ -213,7 +212,7 @@
 		
 		}
 		
-		// 댓글 가져오는 함수 실행
+		// 댓글목록 가져오는 함수 실행
 		listReply();
 		
 		// addReplySubmitButton1 버튼 클릭시 ajax 댓글 추가 요청
