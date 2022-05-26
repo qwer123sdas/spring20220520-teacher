@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.choong.spr.domain.BoardDto;
 import com.choong.spr.mapper.BoardMapper;
 import com.choong.spr.mapper.ReplyMapper;
-
 @Service
 public class BoardService {
 

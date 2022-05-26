@@ -3,6 +3,7 @@ package com.choong.spr.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.choong.spr.domain.MemberDto;
@@ -11,9 +12,18 @@ import com.choong.spr.mapper.MemberMapper;
 public class MemberService {
 	@Autowired
 	MemberMapper mapper;
+	@Autowired  // 비밀번호 암호화(security-context.xml에서 bean 지정)
+	private BCryptPasswordEncoder passwordEncoder;
 	
 	// 회원가입
 	public boolean addMember(MemberDto member) {
+		
+		// 평문 암호를 암호화(encoding)
+		String encodePassword = passwordEncoder.encode(member.getPassword());
+		// 암호화된 패스워드를 다시 셋팅
+		member.setPassword(encodePassword);
+		
+		
 		return mapper.insertMember(member) == 1;
 	}
 	// 아이디 중복여부
@@ -39,10 +49,31 @@ public class MemberService {
 	// 회원정보 삭제
 	public boolean removeMember(MemberDto dto) {
 		MemberDto member = mapper.selectMemberById(dto.getId());
-		if(member.getPassword().equals(dto.getPassword())) {
+		
+		String rawPW = dto.getPassword();
+		String encodePW = member.getPassword();
+		
+		if(passwordEncoder.matches(rawPW, encodePW)) {
 			return mapper.deleteMemberById(dto.getId()) == 1;
 		}
 		
+		return false;
+	}
+	
+	// 회원정보 수정
+	public boolean modifyMember(MemberDto dto, String oldPassword) {
+		// db에서 member읽어서 
+		MemberDto oldMember = mapper.selectMemberById(dto.getId());
+		
+		String encodePW = oldMember.getPassword();
+		
+		// 기존 password가 일치할 때만 계속 진행
+		if(passwordEncoder.matches(oldPassword, encodePW)) {
+			// 암호 인코딩 저장
+			dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+			
+			return mapper.updateMember(dto) == 1;
+		}
 		return false;
 	}
 
