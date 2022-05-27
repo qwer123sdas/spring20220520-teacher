@@ -67,7 +67,7 @@ public class MemberService {
 			
 			// 회원 관련 게시글 삭제
 			boardMapper.deleteBoardByMember(dto.getId());
-			
+			// 회원 관련 권한 삭제
 			int authDelete = mapper.deleteAuthByMemberId(dto.getId());
 			
 			int memberDelete = mapper.deleteMemberById(dto.getId());
