@@ -18,6 +18,9 @@ public interface BoardMapper {
 
 	int deleteBoard(int id);
 	
+	// 회원 관련 게시글 삭제
+	void deleteBoardByMember(String id);
+	
 	// 검색
 	//List<BoardDto> listBoardByKeyword(String keyword);
 

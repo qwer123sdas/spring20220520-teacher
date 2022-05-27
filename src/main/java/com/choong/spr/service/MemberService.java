@@ -8,11 +8,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.choong.spr.domain.MemberDto;
+import com.choong.spr.mapper.BoardMapper;
 import com.choong.spr.mapper.MemberMapper;
 @Service
 public class MemberService {
 	@Autowired
 	MemberMapper mapper;
+	
+	@Autowired
+	BoardMapper boardMapper;
+	
 	@Autowired  // 비밀번호 암호화(security-context.xml에서 bean 지정)
 	private BCryptPasswordEncoder passwordEncoder;
 	
@@ -59,6 +64,10 @@ public class MemberService {
 		String encodePW = member.getPassword();
 		
 		if(passwordEncoder.matches(rawPW, encodePW)) {
+			
+			// 회원 관련 게시글 삭제
+			boardMapper.deleteBoardByMember(dto.getId());
+			
 			int authDelete = mapper.deleteAuthByMemberId(dto.getId());
 			
 			int memberDelete = mapper.deleteMemberById(dto.getId());

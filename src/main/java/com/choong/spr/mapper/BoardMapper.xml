@@ -71,4 +71,9 @@
 		WHERE id = #{id }
 	</delete>
 	
+	<delete id="deleteBoardByMember">
+		DELETE FROM Board
+		WHERE memberId = #{id }
+	</delete>
+	
 </mapper>
