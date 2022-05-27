@@ -1,5 +1,6 @@
 package com.choong.spr.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,21 +26,24 @@ public class ReplyController {
 	private ReplyService service;
 
 	@PostMapping(path = "insert", produces = "text/plain;charset=UTF-8")
-	public ResponseEntity<String> insert(ReplyDto dto) {  
-
-		boolean success = service.insertReply(dto);
-
-		if (success) {
-			return ResponseEntity.ok("새댓글이 등록");
-		} else{
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error");
+	public ResponseEntity<String> insert(ReplyDto dto, Principal principal) { 
+		
+		if(principal != null ) {
+			boolean success = service.insertReply(dto);
+			
+			if (success) {
+				return ResponseEntity.ok("새댓글이 등록");
+			} else{
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error");
+			}
 		}
+		return ResponseEntity.status(401).body("삭제 못함");
 	}
 
 	@PutMapping(path = "modify", produces = "text/plain;charset=UTF-8")
 	public ResponseEntity<String> modify(@RequestBody ReplyDto dto) {// put방식은 dto를 파라미터로 처리 못함
 		boolean success = service.updateReply(dto);
-
+		
 		if (success) {
 			return ResponseEntity.ok("댓글이 변경되었습니다.");
 		}else {
