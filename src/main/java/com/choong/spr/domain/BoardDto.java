@@ -7,11 +7,13 @@ import lombok.Data;
 @Data
 public class BoardDto {
 
-	private int id;
+	private int id; // auto_increase
 	private String title;
 	private String body;
 	private LocalDateTime inserted;
 	private int numOfReply;
+	private String writerNickName;
+	private String memberId;
 
 	public String getPrettyInserted() {
 		// 24시간 이내면 시간만

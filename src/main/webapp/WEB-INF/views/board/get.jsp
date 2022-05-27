@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="my" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -252,9 +253,22 @@
 		<div class="row">
 			<div class="col">
 				<h1>글 본문 
-					<button id="edit-button1" class="btn btn-secondary">
-						<i class="fa-solid fa-pen-to-square"></i>
-					</button>
+					<%--
+					${board.memberId} 
+					${principal.username} 여기서 principal이 어떻게 가져오느냐? spring 태그랩으로 가져올 수 있음. 아래처럼 사용--%>
+					<sec:authorize access="isAuthenticated()">
+					<sec:authentication property="principal" var="principal"/>
+						<c:if test="${principal.username == board.memberId }">
+							<button id="edit-button1" class="btn btn-secondary">
+								<i class="fa-solid fa-pen-to-square"></i>
+							</button>
+						</c:if>
+					</sec:authorize>
+					<sec:authorize access="hasRole('ADMIN')">
+							<button id="edit-button1" class="btn btn-secondary">
+								<i class="fa-solid fa-pen-to-square"></i>
+							</button>
+					</sec:authorize>
 				</h1>
 				
 				<c:if test="${not empty message }">
@@ -277,6 +291,11 @@
 						<textarea class="form-control" name="body" id="textarea1"
 							cols="30" rows="10" readonly>${board.body }</textarea>
 					</div>
+					
+					<div>
+						<label for="input2" class="form-label">작성자</label>
+						<input class="form-control" type="text" value="${board.writerNickName }" readonly/>
+					</div> 
 					
 					<div>
 						<label for="input2" class="form-label">작성일시</label>

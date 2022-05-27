@@ -1,5 +1,6 @@
 package com.choong.spr.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +47,12 @@ public class BoardController {
 	}
 	
 	@PostMapping("insert")
-	public String insert(BoardDto board, RedirectAttributes rttr) {
+	public String insert(BoardDto board, Principal principal, RedirectAttributes rttr) { // Principal : ???에 넘겨준 username, password, role에 대한 정보가 담겨져 있다
+		board.setMemberId(principal.getName());
 		boolean success = service.insertBoard(board);
+		//System.out.println(principal);
+		//System.out.println(principal.getName()); // username
+		
 		
 		if (success) {
 			rttr.addFlashAttribute("message", "새 글이 등록되었습니다.");
@@ -70,13 +75,20 @@ public class BoardController {
 	}
 	
 	@PostMapping("modify")
-	public String modify(BoardDto dto, RedirectAttributes rttr) {
-		boolean success = service.updateBoard(dto);
+	public String modify(BoardDto dto, Principal principal, RedirectAttributes rttr) {
+		BoardDto oldBoard = service.getBoardById(dto.getId());
 		
-		if (success) {
-			rttr.addFlashAttribute("message", "글이 수정되었습니다.");
-		} else {
-			rttr.addFlashAttribute("message", "글이 수정되지 않았습니다.");
+		if(oldBoard.getMemberId().equals(principal.getName())) {
+			
+			boolean success = service.updateBoard(dto);
+			
+			if (success) {
+				rttr.addFlashAttribute("message", "글이 수정되었습니다.");
+			} else {
+				rttr.addFlashAttribute("message", "글이 수정되지 않았습니다.");
+			}
+		}else {
+			rttr.addFlashAttribute("message", "수정권한이 없습니다.");
 		}
 		
 		rttr.addAttribute("id", dto.getId());
@@ -85,17 +97,25 @@ public class BoardController {
 	}
 	
 	@PostMapping("remove")
-	public String remove(BoardDto dto, RedirectAttributes rttr) {
-		
-		boolean success = service.deleteBoard(dto.getId());
-		
-		if (success) {
-			rttr.addFlashAttribute("message", "글이 삭제 되었습니다.");
+	public String remove(BoardDto dto, Principal principal, RedirectAttributes rttr) {
+		// 게시물 정보 얻고
+		BoardDto oldBoard = service.getBoardById(dto.getId());
+		// 게시물 작성자(memberId)와 principal의 name과 비교해서 같을 때만 진행
+		if(oldBoard.getMemberId().equals(principal.getName())){
+			boolean success = service.deleteBoard(dto.getId());
 			
-		} else {
-			rttr.addFlashAttribute("message", "글이 삭제 되지않았습니다.");
+			if (success) {
+				rttr.addFlashAttribute("message", "글이 삭제 되었습니다.");
+				
+			} else {
+				rttr.addFlashAttribute("message", "글이 삭제 되지않았습니다.");
+			}
+			
+		}else {
+			rttr.addFlashAttribute("message", "권한이 없습니다.");
+			return "redirect:/board/get";
 		}
-		
+		// 아니면 바로 리턴 시키기
 		return "redirect:/board/list";
 	}
 }
