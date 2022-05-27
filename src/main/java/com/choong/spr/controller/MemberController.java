@@ -114,4 +114,10 @@ public class MemberController {
 		rttr.addAttribute("id", dto.getId()); // 쿼리 스트링에 붙고
 		return "redirect:/member/get";
 	}
+	
+	// 로그인 페이지로 가기
+	@GetMapping("login")
+	public void loginPage() {
+		
+	}
 }

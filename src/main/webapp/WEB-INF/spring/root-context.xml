@@ -17,6 +17,7 @@
 
 	<context:property-placeholder location="classpath:jdbc.properties"/>
 	
+	<!-- 데이터 관리하는 빈 -->
 	<bean id="dataSource" class="org.mariadb.jdbc.MariaDbPoolDataSource" destroy-method="close">
 		<property name="url" value="${db.fullUrl}"></property>
 	</bean>

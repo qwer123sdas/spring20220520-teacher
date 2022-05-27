@@ -8,6 +8,11 @@
 		INSERT INTO Member(id, password, email, nickName)
 		VALUES (#{id}, #{password}, #{email}, #{nickName})
 	</insert>
+	<!-- 회원 권한 추가 -->
+	<insert id="insertAuth">
+		INSERT INTO Auth(memberId, role)
+		VALUES(#{id}, #{auth})
+	</insert>
 	<!-- 아이디 중복여부  -->
 	<select id="countMemberId" resultType="int">
 		SELECT COUNT(id) 
@@ -47,6 +52,11 @@
 	<delete id="deleteMemberById">
 		DELETE FROM Member
 		WHERE id = #{id}
+	</delete>
+	<!-- 권한테이블 삭제 -->
+	<delete id="deleteAuthByMemberId">
+		DELETE FROM Auth
+		WHERE memberId = #{id}
 	</delete>
 	
 	<!-- 회원정보 수정 -->
