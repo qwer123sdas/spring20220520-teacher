@@ -19,7 +19,7 @@
 <body>
 	<my:navBar current="login"></my:navBar>
 	<h1>로그인</h1>
-	<form action="${appRoot }/login" method="post">
+	<form action="${appRoot }/member/login" method="post">
 		아이디 : <input type="text" name="username"/> <br />
 		패스워드 : <input type="password" name="password"/> <br />
 		<input type="checkbox" name="remember-me" id=""/> 자동로그인 <br />

@@ -7,16 +7,23 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.choong.spr.domain.BoardDto;
 import com.choong.spr.domain.MemberDto;
 import com.choong.spr.mapper.BoardMapper;
 import com.choong.spr.mapper.MemberMapper;
+import com.choong.spr.mapper.ReplyMapper;
 @Service
 public class MemberService {
 	@Autowired
 	MemberMapper mapper;
 	
 	@Autowired
+	BoardService boardService;
+	@Autowired
 	BoardMapper boardMapper;
+	
+	@Autowired
+	ReplyMapper replyMapper;
 	
 	@Autowired  // 비밀번호 암호화(security-context.xml에서 bean 지정)
 	private BCryptPasswordEncoder passwordEncoder;
@@ -64,14 +71,27 @@ public class MemberService {
 		String encodePW = member.getPassword();
 		
 		if(passwordEncoder.matches(rawPW, encodePW)) {
+			// 회원 댓글 삭제
+			replyMapper.deleteReplyByMemberId(dto.getId());
+			
+			// 다른 회원이 쓴 댓글 삭제
+				// 회원 아이디를 통해 작성된 게시글 리스트 가져오기
+			List<BoardDto> boardList = boardMapper.listByMemberId(dto.getId());
+			for(BoardDto board : boardList) {
+				boardService.deleteBoard(board.getId());				
+				//replyMapper.deleteByBoardId(board.getId());
+				
+			}
 			
 			// 회원 관련 게시글 삭제
-			boardMapper.deleteBoardByMember(dto.getId());
-			// 회원 관련 권한 삭제
-			int authDelete = mapper.deleteAuthByMemberId(dto.getId());
+			// boardMapper.deleteBoardByMemberId(dto.getId());
 			
+			// 회원 관련 권한 삭제
+			mapper.deleteAuthByMemberId(dto.getId());
+			
+			// 회원 정보 삭제
 			int memberDelete = mapper.deleteMemberById(dto.getId());
-			return  memberDelete == 1 && authDelete == 1;
+			return  memberDelete == 1;
 		}
 		
 		return false;

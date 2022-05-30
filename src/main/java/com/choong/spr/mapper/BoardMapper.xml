@@ -58,6 +58,12 @@
 		WHERE b.id = #{id}
 	</select>
 	
+	<select id="listByMemberId" resultType="com.choong.spr.domain.BoardDto">
+		SELECT id
+		FROM Board
+		WHERE memberId = #{memberId}
+	</select>
+	
 	<update id="updateBoard">
 		UPDATE Board
 		SET title = #{title},
@@ -71,9 +77,11 @@
 		WHERE id = #{id }
 	</delete>
 	
-	<delete id="deleteBoardByMember">
+	<delete id="deleteBoardByMemberId">
 		DELETE FROM Board
-		WHERE memberId = #{id }
+		WHERE memberId = #{memberId }
 	</delete>
+	
+	
 	
 </mapper>

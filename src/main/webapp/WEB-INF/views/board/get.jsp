@@ -94,18 +94,22 @@
 					for(let i = 0; i < list.length; i++){
 						const replyElement = $("<li class='list-group-item'/>");
 						replyElement.html(`
-								<div id="replyDisplayContainer\${list[i].id }">
+								<div id="replyDisplayContainer\${list[i].id }" >
 									<div class="fw-bold">
 						 				<i class="fa-solid fa-comment"></i> 
 										\${list[i].prettyInserted}
-									 	<span class="reply-edit-toggle-button badge bg-info text-dark" id="replyEditToggleButton\${list[i].id }" data-reply-id="\${list[i].id }" >
-									 		<i class="fa-solid fa-pen-to-square"></i>
-								 		</span>
-									 	<span class="reply-delete-button badge bg-danger" data-reply-id="\${list[i].id }">
-									 		<i class="fa-solid fa-trash-can"></i>
-									 	</span>
+										
+										
+										<span id="modifyButtonWrapper\${list[i].id}"></span>
+									 	<div>\${list[i].memberId} </div>
+									 	
+									 	
 									</div>
-							 		\${list[i].content }
+									<span class="badge bg-light text-dark">
+										<i class="fa-solid fa-user"></i>
+										\${list[i].writerNickName }
+									</span>
+							 		<span id="replyContent\${list[i].id }"></span>
 								 	
 								 	
 								</div>
@@ -125,7 +129,19 @@
 								</div>`
 								);  /* 백틱안의 자바스크립트에서 EL을 자바스크립트 용어를 처리하기위해선 백슬래쉬로 사용 \${list[i]} */
 						replyListElement.append(replyElement);
-								
+						$('#replyContent' + list[i].id).text(list[i].content);
+						
+					 	// own이 true일 때만, 수정 & 삭제버튼 보이기
+					 	if(list[i].own){
+					 		$('#modifyButtonWrapper'+list[i].id).html(`
+					 				<span class='reply-edit-toggle-button badge bg-info text-dark' id='replyEditToggleButton'+list[i].id data-reply-id='list[i].id '>
+							 		<i class='fa-solid fa-pen-to-square'></i>
+							 		</span>
+								 	<span class='reply-delete-button badge bg-danger' data-reply-id='list[i].id'>
+								 		<i class='fa-solid fa-trash-can'></i>
+								 	</span>`);
+					 	}
+						
 													
 					} //  for문 끝
 					
@@ -153,6 +169,7 @@
 							},
 							error : function(){
 								console.log("수정 실패");
+								$('#replyMessage1').show().text("권한없는 사람이 댓글 수정하려고 함").fadeOut(1000);
 							},
 							complete : function(){
 								console.log("수정 종료");
@@ -197,6 +214,7 @@
 								},
 								error : function(){
 									console.log(replyId + "댓글 삭제 중 문제 발생됨");
+									$('#replyMessage1').show().text("삭제 못함").fadeOut(3000);
 								},
 								complete : function(){
 									console.log(replyId + "댓글 삭제요청 끝");
@@ -235,6 +253,7 @@
 				},
 				error : function(){
 					console.log("문제발생");
+					$('#replyMessage1').show().text("댓글 작성 불가").fadeOut(1000);
 				},
 				complete : function(){
 					console.log("요청완료");

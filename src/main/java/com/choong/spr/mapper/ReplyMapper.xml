@@ -5,18 +5,31 @@
 <mapper namespace="com.choong.spr.mapper.ReplyMapper">
 
 	<insert id="insertReply">
-	INSERT INTO Reply (board_id, content)
-	VALUES (#{boardId}, #{content})
+	INSERT INTO Reply (board_id, content, memberId)
+	VALUES (#{boardId}, #{content}, #{memberId})
 	</insert>
 	
 	<select id="selectAllBoardId" resultType="com.choong.spr.domain.ReplyDto">
-	SELECT id, 
-	       board_id boardId,
-	       content,
-	       inserted
+	SELECT r.id, 
+	       r.board_id boardId,
+	       r.content,
+	       m.nickName AS writerNickName,
+	       r.memberId,
+	       r.inserted,
+	       IF(m.id = #{memberId}, 1, 0) own
+	FROM Reply r JOIN Member m ON r.memberID = m.id
+	WHERE r.board_id = #{boardId}
+	ORDER BY r.id
+	</select>
+	<!-- 유저아이디로 이름 가져오기  -->
+	<select id="selectReplyById" resultType="com.choong.spr.domain.ReplyDto">
+	SELECT id,
+			board_id boardID,
+			content,
+			memberId,
+			inserted
 	FROM Reply
-	WHERE board_id = #{boardId}
-	ORDER BY id
+	WHERE id = #{id}
 	</select>
 	
 	<update id="updateReply">
@@ -34,6 +47,12 @@
 	<delete id="deleteByBoardId">
 	DELETE FROM Reply
 	WHERE board_id = #{boardId}
+	</delete>
+	
+	<!--  멤버 아이디와 관련된 댓글 지우기 -->
+	<delete id="deleteReplyByMemberId">
+	DELETE FROM Reply
+	WHERE memberId = #{memberId}
 	</delete>
 	
 </mapper>

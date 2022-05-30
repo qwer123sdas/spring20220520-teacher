@@ -120,4 +120,8 @@ public class MemberController {
 	public void loginPage() {
 		
 	}
+	@PostMapping("login")
+	public void loginProcess() {
+		System.out.println("프로세스 ");
+	}
 }

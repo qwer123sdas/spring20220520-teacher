@@ -2,6 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 		<!-- p.652  -->
@@ -9,7 +10,7 @@
 
 	<security:http>
 		<security:csrf disabled="true"/>
-		<security:form-login  login-page="/member/login" always-use-default-target="true" default-target-url="/board/list"/>  <!--로그인 성공하면  -->
+		<security:form-login login-processing-url="/member/login" login-page="/member/login" always-use-default-target="true" default-target-url="/board/list"/>  <!--로그인 성공하면  -->
 		<security:logout logout-success-url="/board/list"/>
 		<!-- access 속성 작성법 (책 673~674) -->
 		<!-- 게시글 create, update, delete -->
@@ -17,8 +18,8 @@
 		<security:intercept-url pattern="/board/modify" access="isAuthenticated()"/>
 		<security:intercept-url pattern="/board/remove" access="isAuthenticated()"/>
 		<!-- 댓글 create, update, delelte -->
-		<security:intercept-url pattern="/reply/modify" access="isAuthenticated()"/>
-		<security:intercept-url pattern="/reply/delete/*" access="isAuthenticated()"/>
+		<!-- <security:intercept-url pattern="/reply/modify" access="isAuthenticated()"/>
+		<security:intercept-url pattern="/reply/delete/*" access="isAuthenticated()"/> -->
 		
 		<!-- 회원들 정보, read, update, delete  -->
 		<security:intercept-url pattern="/member/list" access = "hasRole('ADMIN')"/>
