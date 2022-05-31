@@ -159,7 +159,7 @@
 
 </head>
 <body>
-	<my:navBar current="memberList"></my:navBar>
+	<my:navBar current="memberInfo"></my:navBar>
 	<div>
 		<p>${message }</p>
 	</div>

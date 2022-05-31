@@ -1,7 +1,10 @@
 package com.choong.spr.controller;
 
 import java.lang.ProcessBuilder.Redirect;
+import java.security.Principal;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -82,37 +85,57 @@ public class MemberController {
 	
 	// 특정 회원 정보
 	@GetMapping("get")
-	public void getMember(String id, Model model) {
-		MemberDto member = service.getMemberById(id);
-		model.addAttribute("member", member);
+	public String getMember(String id, Model model, Principal principal, HttpServletRequest request) {
+		if(hasAuthOrAdmin(id, principal, request)) {
+			// 로그인 된 상태
+			MemberDto member = service.getMemberById(id);
+			model.addAttribute("member", member);
+			return null; // view로 해석이됨!
+		}
+		// 로그인 안된 상태
+		return "redirect:/board/list";
+		
 	}
 	
 	// 회원 정보 삭제
 	@PostMapping("remove")
-	public String removeMember(MemberDto dto, RedirectAttributes rttr) {
-		boolean success = service.removeMember(dto);
-		
-		if(success) {
-			rttr.addFlashAttribute("message", "회원 탈퇴 되었습니다.");
-			return "redirect:/board/list";
+	public String removeMember(MemberDto dto, RedirectAttributes rttr, Principal principal, HttpServletRequest request) {
+		if(hasAuthOrAdmin(dto.getId(), principal, request)) {
+			boolean success = service.removeMember(dto);
+			
+			
+			if(success) {
+				rttr.addFlashAttribute("message", "회원 탈퇴 되었습니다.");
+				return "redirect:/board/list";
+			}else {
+				rttr.addAttribute("id", dto.getId()); // addFlashAttribute는 model로 보내지고 addAttribute는 쿼리스트링으로 보내지기 때문
+				return "redirect:/member/get";
+			}
+			
 		}else {
-			rttr.addAttribute("id", dto.getId()); // addFlashAttribute는 model로 보내지고 addAttribute는 쿼리스트링으로 보내지기 때문
-			return "redirect:/member/get";
+			return "redirect:/board/list";
 		}
+		
 	}
 	
 	// 회원정보 수정
 	@PostMapping("modify")
-	public String modifyMember(MemberDto dto, String oldPassword, RedirectAttributes rttr) {
-		boolean success = service.modifyMember(dto, oldPassword);
-		if(success) {
-			rttr.addFlashAttribute("message", "회원정보 수정 완료");
+	public String modifyMember(MemberDto dto, String oldPassword, RedirectAttributes rttr, Principal principal, HttpServletRequest request) {
+		if(hasAuthOrAdmin(dto.getId(), principal, request)) {
+			boolean success = service.modifyMember(dto, oldPassword);
+			if(success) {
+				rttr.addFlashAttribute("message", "회원정보 수정 완료");
+			}else {
+				rttr.addFlashAttribute("message", "회원정보 수정되지 않았습니다.");
+			}
+			//rttr.addFlashAttribute("member", dto); // 모델에 붙고
+			rttr.addAttribute("id", dto.getId()); // 쿼리 스트링에 붙고
+			return "redirect:/member/get";
+			
 		}else {
-			rttr.addFlashAttribute("message", "회원정보 수정되지 않았습니다.");
+			return "redirect:/board/list";
 		}
-		//rttr.addFlashAttribute("member", dto); // 모델에 붙고
-		rttr.addAttribute("id", dto.getId()); // 쿼리 스트링에 붙고
-		return "redirect:/member/get";
+		
 	}
 	
 	// 로그인 페이지로 가기
@@ -123,5 +146,9 @@ public class MemberController {
 	@PostMapping("login")
 	public void loginProcess() {
 		System.out.println("프로세스 ");
+	}
+	// 로그인 아이디 + 요청받은 아이디  + 요청받은 권한이 모두 같은지 알아보는 메소드,
+	private boolean hasAuthOrAdmin(String id, Principal principal, HttpServletRequest request) {
+		return request.isUserInRole("ROLE_ADMIN") || (principal != null && principal.getName().equals(id));
 	}
 }
