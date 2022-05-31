@@ -26,6 +26,7 @@
 		<security:intercept-url pattern="/member/get" access = "isAuthenticated()"/>
 		<security:intercept-url pattern="/member/delete" access = "isAuthenticated()"/>
 		<security:intercept-url pattern="/member/modify" access = "isAuthenticated()"/>
+		<security:intercept-url pattern="/member/initpw"  access = "hasRole('ADMIN')"/>
 		<security:remember-me/>
 	</security:http>
 	<security:authentication-manager>

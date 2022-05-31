@@ -113,5 +113,11 @@ public class MemberService {
 		}
 		return false;
 	}
+	// 패스워드 초기화 : 아이디랑 같게 
+	public void resetPW(String id) {
+		String encodePassword = passwordEncoder.encode(id);
+		mapper.updatePasswordById(id, encodePassword);
+		
+	}
 
 }

@@ -30,4 +30,7 @@ public interface MemberMapper {
 	
 	// 회원권한 주기
 	int insertAuth(@Param("id") String id, @Param("auth")String auth);
+	
+	// 회원 비밀번호 초기화
+	void updatePasswordById(@Param("id")String id, @Param("password")String password);
 }

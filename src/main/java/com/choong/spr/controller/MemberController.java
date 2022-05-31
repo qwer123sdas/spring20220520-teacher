@@ -30,51 +30,6 @@ public class MemberController {
 		
 	}
 	
-	@PostMapping("signup")
-	public String signupProcess(MemberDto member, RedirectAttributes rttr) {
-		boolean success = service.addMember(member);
-		if(success) {
-			rttr.addFlashAttribute("message", "회원가입이 완료되었습니다.");
-			return "redirect:/board/list";
-		}else {
-			rttr.addFlashAttribute("message", "회원가입을 실패했습니다.");
-			rttr.addFlashAttribute("member", member);
-			return "redirect:/member/signup";
-		}
-	}
-	
-	@GetMapping(path="check", params ="id")
-	@ResponseBody
-	public String idCheck(String id) {
-		boolean exist  = service.hasMemberId(id);
-		if(exist) {
-			return "notOk";
-		}else {
-			return "ok";
-		}
-	}
-	
-	@GetMapping(path="check", params ="email")
-	@ResponseBody
-	public String emailCheck(String email) {
-		boolean exist  = service.hasMemberEmail(email);
-		if(exist) {
-			return "notOk";
-		}else {
-			return "ok";
-		}
-	}
-	
-	@GetMapping(path="check", params = "nickName")
-	@ResponseBody
-	public String nickNameCheck(String nickName) {
-		boolean result = service.hasMemberNickName(nickName);
-		if(result) {
-			return "notOk";
-		}else {
-			return "ok";
-		}
-	}
 	
 	// 회원정보 가져오기
 	@GetMapping("list")
@@ -147,8 +102,67 @@ public class MemberController {
 	public void loginProcess() {
 		System.out.println("프로세스 ");
 	}
+	
+	// 암호 초기화
+	@GetMapping("initpw")
+	public void initpwPage() {
+		
+	}
+	@PostMapping("initpw")
+	public void initpwResetPage(String id) {
+		service.resetPW(id);
+	}
+	
 	// 로그인 아이디 + 요청받은 아이디  + 요청받은 권한이 모두 같은지 알아보는 메소드,
 	private boolean hasAuthOrAdmin(String id, Principal principal, HttpServletRequest request) {
 		return request.isUserInRole("ROLE_ADMIN") || (principal != null && principal.getName().equals(id));
 	}
+	
+	@PostMapping("signup")
+	public String signupProcess(MemberDto member, RedirectAttributes rttr) {
+		boolean success = service.addMember(member);
+		if(success) {
+			rttr.addFlashAttribute("message", "회원가입이 완료되었습니다.");
+			return "redirect:/board/list";
+		}else {
+			rttr.addFlashAttribute("message", "회원가입을 실패했습니다.");
+			rttr.addFlashAttribute("member", member);
+			return "redirect:/member/signup";
+		}
+	}
+	
+	@GetMapping(path="check", params ="id")
+	@ResponseBody
+	public String idCheck(String id) {
+		boolean exist  = service.hasMemberId(id);
+		if(exist) {
+			return "notOk";
+		}else {
+			return "ok";
+		}
+	}
+	
+	@GetMapping(path="check", params ="email")
+	@ResponseBody
+	public String emailCheck(String email) {
+		boolean exist  = service.hasMemberEmail(email);
+		if(exist) {
+			return "notOk";
+		}else {
+			return "ok";
+		}
+	}
+	
+	@GetMapping(path="check", params = "nickName")
+	@ResponseBody
+	public String nickNameCheck(String nickName) {
+		boolean result = service.hasMemberNickName(nickName);
+		if(result) {
+			return "notOk";
+		}else {
+			return "ok";
+		}
+	}
+	
+	
 }
