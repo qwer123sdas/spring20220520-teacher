@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.choong.spr.domain.BoardDto;
@@ -47,11 +48,17 @@ public class BoardController {
 	}
 	
 	@PostMapping("insert")
-	public String insert(BoardDto board, Principal principal, RedirectAttributes rttr) { // Principal : ???에 넘겨준 username, password, role에 대한 정보가 담겨져 있다
-		board.setMemberId(principal.getName());
-		boolean success = service.insertBoard(board);
+	public String insert(BoardDto board, MultipartFile file, Principal principal, RedirectAttributes rttr) { // Principal : ???에 넘겨준 username, password, role에 대한 정보가 담겨져 있다
 		//System.out.println(principal);
 		//System.out.println(principal.getName()); // username
+		board.setMemberId(principal.getName());
+		
+		// 파일 올리기
+		if(file.getSize() > 0) {
+			board.setFileName(file.getOriginalFilename());
+		}
+		
+		boolean success = service.insertBoard(board, file);
 		
 		
 		if (success) {

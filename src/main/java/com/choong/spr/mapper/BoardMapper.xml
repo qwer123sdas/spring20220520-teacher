@@ -45,16 +45,23 @@
 		VALUES (#{title}, #{body}, #{memberId})
 	</insert>
 	
+	<insert id="insertFile">
+		INSERT INTO File (boardId, fileName)
+		VALUES (#{boardId}, #{fileName})
+	</insert>
+	
 	<select id="selectBoardById" resultType="com.choong.spr.domain.BoardDto">
 		SELECT b.id, 
 				b.title,
 				b.body, 
-				b.inserted, 
+				b.inserted,
 				COUNT(r.id) numOfReply,
 				m.id memberId,
-				m.nickName writerNickName
+				m.nickName writerNickName,
+				f.fileName
 		FROM Board b LEFT JOIN Reply r ON b.id = r.board_id
 					 LEFT JOIN Member m ON b.memberId = m.id
+					 LEFT JOIN File f ON b.id = f.boardId
 		WHERE b.id = #{id}
 	</select>
 	
@@ -63,6 +70,13 @@
 		FROM Board
 		WHERE memberId = #{memberId}
 	</select>
+	
+	<select id="selectFileByBoardId" resultType="String">
+		SELECT fileName
+		FROM File
+		WHERE boardId = #{boardId}
+	</select>
+	
 	
 	<update id="updateBoard">
 		UPDATE Board
@@ -81,7 +95,10 @@
 		DELETE FROM Board
 		WHERE memberId = #{memberId }
 	</delete>
-	
+	<delete id="deleteFileByBoardId">
+		DELETE FROM File
+		WHERE boardId = #{boardId}
+	</delete>
 	
 	
 </mapper>

@@ -25,6 +25,13 @@ public interface BoardMapper {
 	// 게시물관련 번호
 	List<BoardDto> listByMemberId(String memberId);
 
+	// 파일 등록
+	void insertFile(@Param("boardId")int boardId, @Param("fileName")String fileName);
+	// 파일목록 읽기
+	String selectFileByBoardId(int boardId);
+	// 파일테이블 삭제
+	void deleteFileByBoardId(int boardId);
+
 	
 	// 검색
 	//List<BoardDto> listBoardByKeyword(String keyword);
