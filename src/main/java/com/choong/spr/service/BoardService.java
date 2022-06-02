@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,7 @@ import com.choong.spr.mapper.ReplyMapper;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 @Service
@@ -40,8 +42,13 @@ public class BoardService {
 	public void init() {
 		Region region = Region.AP_NORTHEAST_2;
 		this.s3 = S3Client.builder()
-						.region(region)
-						.build();
+							.region(region)
+							.build();
+	}
+	
+	@PreDestroy // 빈이 사라지기 전
+	public void destroy() {
+		this.s3.close();
 	}
 	
 	public List<BoardDto> listBoard(String type, String keyword) {
@@ -127,6 +134,7 @@ public class BoardService {
 		String fileName = mapper.selectFileByBoardId(id);
 		
 		// 실제 파일 삭제
+		/*
 		if(fileName != null && !fileName.isEmpty()) {
 			String folder = "C:/imgtmp/board/" + id + "/";
 			String path = folder+ fileName;
@@ -136,7 +144,11 @@ public class BoardService {
 			// 파일 담고 있던 폴더 지우기
 			File dirFolder= new File(folder);
 			dirFolder.delete();
-		}
+		}*/
+		// aws의 s3에서 파일 삭제
+		deleteFromAwsS3(id, fileName);
+		
+		
 		// 파일테이블 삭제
 		mapper.deleteFileByBoardId(id);
 		
@@ -147,12 +159,29 @@ public class BoardService {
 		
 		return mapper.deleteBoard(id) == 1;
 	}
+	// aws의 s3에서 파일 삭제
+	private void deleteFromAwsS3(int id, String fileName) {
+		String key = "board/" + id + "/" + fileName;
+		
+		DeleteObjectRequest deleteBucketRequest;
+		deleteBucketRequest = DeleteObjectRequest.builder()
+				.bucket(bucketName)
+				.key(key)
+				.build();
+		
+		s3.deleteObject(deleteBucketRequest);
+		
+	}
 	// 검색기능
 	/*	public List<BoardDto> searchBoard(String keyword) {
 			                                 // 와일드 카드
 			return mapper.listBoardByKeyword("%"+keyword+"%");
 		}*/
 }
+	
+	
+	
+	
 
 
 
