@@ -58,22 +58,26 @@ public class BoardService {
 	
 	
 	@Transactional
-	public boolean insertBoard(BoardDto board, MultipartFile file) {
-//		board.setInserted(LocalDateTime.now());
+	public boolean insertBoard(BoardDto board, MultipartFile[] files) {
+		//board.setInserted(LocalDateTime.now());
 		
 		// 게시글 등록
 		int cnt = mapper.insertBoard(board);
 		
-		// 파일 등록
-		if(file.getSize() > 0) {
-			mapper.insertFile(board.getId(), file.getOriginalFilename());
-			// saveFile(board.getId(), file); // 현재는 desk탑에 저장하지만 aws에 저장하도록 해야 함.
-			saveFileAwsS3(board.getId(), file); // aws s3에 업로드(저장)
+		// 여러 파일 등록
+		if(files != null) {
+			for(MultipartFile file : files) {
+				if(file.getSize() > 0) {
+					mapper.insertFile(board.getId(), file.getOriginalFilename()); // db에 저장
+					// saveFile(board.getId(), file); // 현재는 desk탑에 저장하지만 aws에 저장하도록 해야 함.
+					saveFileAwsS3(board.getId(), file); // aws s3에 업로드(저장)
+				}
+			}
 		}
 		
 		return cnt == 1;
 	}
-	
+
 	
 	// aws s3에 업로드(저장)
 	private void saveFileAwsS3(int id, MultipartFile file) {
@@ -81,7 +85,7 @@ public class BoardService {
 		String key = "board/" + id + "/" + file.getOriginalFilename();
 		
 		PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-				.acl(ObjectCannedACL.PUBLIC_READ) 		 // acl : 권한 설정
+				.acl(ObjectCannedACL.PUBLIC_READ) 		 // acl : 다른사람 접근권한 설정
 				.bucket(bucketName) 					// bucket 위치 설정
 				.key(key)								// 키
 				.build(); 								 // 이를 통해 PutObjectRequest객체 만듬
@@ -118,9 +122,15 @@ public class BoardService {
 		
 	}
 
+	// 특정 1가지 게시물 데이터 가져오기
 	public BoardDto getBoardById(int id) {
-		// TODO Auto-generated method stub
-		return mapper.selectBoardById(id);
+		BoardDto board = mapper.selectBoardById(id);
+		
+		// 여러가지 업로드된 데이터 가져오기
+		List<String> fileNames = mapper.selectFileNameByBoard(id);
+		board.setFileName(fileNames);
+		
+		return board;
 	}
 
 	public boolean updateBoard(BoardDto dto) {
@@ -172,6 +182,9 @@ public class BoardService {
 		s3.deleteObject(deleteBucketRequest);
 		
 	}
+	
+
+	
 	// 검색기능
 	/*	public List<BoardDto> searchBoard(String keyword) {
 			                                 // 와일드 카드

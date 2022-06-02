@@ -1,6 +1,7 @@
 package com.choong.spr.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,17 +49,28 @@ public class BoardController {
 	}
 	
 	@PostMapping("insert")
-	public String insert(BoardDto board, MultipartFile file, Principal principal, RedirectAttributes rttr) { // Principal : ???에 넘겨준 username, password, role에 대한 정보가 담겨져 있다
+	public String insert(BoardDto board,
+						MultipartFile[] files, 
+						Principal principal, 
+						RedirectAttributes rttr) { // Principal : ???에 넘겨준 username, password, role에 대한 정보가 담겨져 있다
 		//System.out.println(principal);
 		//System.out.println(principal.getName()); // username
 		board.setMemberId(principal.getName());
 		
-		// 파일 올리기
+		// 한개 파일 올리기
+		/*
 		if(file.getSize() > 0) {
 			board.setFileName(file.getOriginalFilename());
+		}*/
+		if(files != null) {
+			List<String> fileList = new ArrayList<>();
+			for(MultipartFile file : files) {
+				fileList.add(file.getOriginalFilename());
+			}
+			board.setFileName(fileList);
 		}
 		
-		boolean success = service.insertBoard(board, file);
+		boolean success = service.insertBoard(board, files);
 		
 		
 		if (success) {

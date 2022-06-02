@@ -33,7 +33,7 @@
 					</div>
 					<div>
 						파일
-						<input type="file" name="file" accept="image/*"/> <!-- 이미지 파일만 가능하게 해놓음 -->
+						<input multiple="multiple" type="file" name="files" accept="image/*"/> <!-- 이미지 파일만 가능하게 해놓음 -->
 					</div>
 					
 					<button class="btn btn-primary">작성</button>

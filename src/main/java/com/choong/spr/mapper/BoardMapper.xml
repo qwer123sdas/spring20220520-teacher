@@ -40,6 +40,12 @@
 		ORDER BY b.id DESC
 	</select>
 	
+	<select id="selectFileNameByBoard" resultType="String">
+		SELECT fileName
+		FROM File
+		WHERE boardId = #{boardId}
+	</select>
+	
 	<insert id="insertBoard" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
 		INSERT INTO Board (title, body, memberId)
 		VALUES (#{title}, #{body}, #{memberId})
@@ -57,11 +63,9 @@
 				b.inserted,
 				COUNT(r.id) numOfReply,
 				m.id memberId,
-				m.nickName writerNickName,
-				f.fileName
+				m.nickName writerNickName
 		FROM Board b LEFT JOIN Reply r ON b.id = r.board_id
 					 LEFT JOIN Member m ON b.memberId = m.id
-					 LEFT JOIN File f ON b.id = f.boardId
 		WHERE b.id = #{id}
 	</select>
 	
