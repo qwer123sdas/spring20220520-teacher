@@ -314,7 +314,7 @@
 					
 					<div>
 						<%-- <img src="file:///C:/imgtmp/board/${board.id }/${board.fileName }" alt="" /> --%>
-						<img src="https://bucket0207-spring0520-teacher-test.s3.ap-northeast-2.amazonaws.com/board/${board.id }/${board.fileName }" alt="" />
+						<img src="${imageUrl }/board/${board.id }/${board.fileName }" alt="" />
 					</div>
 					
 					<div>
