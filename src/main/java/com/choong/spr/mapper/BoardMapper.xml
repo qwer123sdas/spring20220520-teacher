@@ -17,10 +17,12 @@
 				b.title,
 				b.inserted, 
 				b.memberId, 
-				COUNT(r.id) numOfReply,
-				m.nickName writerNickName
+				COUNT(DISTINCT r.id) numOfReply,
+				m.nickName writerNickName,
+				COUNT(f.id) hasFile
 		FROM Board b LEFT JOIN Reply r ON b.id = r.board_id
 					 LEFT JOIN Member m ON b.memberId = m.id
+					 LEFT JOIN File f ON b.id = f.boardId
 		<if test="keyword != '%%'">
 			<choose >
 				<when test="type == 'all'">
@@ -46,15 +48,6 @@
 		WHERE boardId = #{boardId}
 	</select>
 	
-	<insert id="insertBoard" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
-		INSERT INTO Board (title, body, memberId)
-		VALUES (#{title}, #{body}, #{memberId})
-	</insert>
-	
-	<insert id="insertFile">
-		INSERT INTO File (boardId, fileName)
-		VALUES (#{boardId}, #{fileName})
-	</insert>
 	
 	<select id="selectBoardById" resultType="com.choong.spr.domain.BoardDto">
 		SELECT b.id, 
@@ -81,6 +74,16 @@
 		WHERE boardId = #{boardId}
 	</select>
 	
+	<insert id="insertBoard" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		INSERT INTO Board (title, body, memberId)
+		VALUES (#{title}, #{body}, #{memberId})
+	</insert>
+	
+	<insert id="insertFile">
+		INSERT INTO File (boardId, fileName)
+		VALUES (#{boardId}, #{fileName})
+	</insert>
+	
 	
 	<update id="updateBoard">
 		UPDATE Board
@@ -102,6 +105,13 @@
 	<delete id="deleteFileByBoardId">
 		DELETE FROM File
 		WHERE boardId = #{boardId}
+	</delete>
+	
+	<!--특정 파일만 삭제하기  -->
+	<delete id ="deleteFileByBoardAndFileName">
+		DELETE FROM File
+		WHERE boardId = #{boardId} 
+			AND fileName = #{fileName}
 	</delete>
 	
 	

@@ -1,3 +1,4 @@
+<%@page import="java.net.URLEncoder"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -28,6 +29,8 @@
 			$("#textarea1").removeAttr("readonly");
 			$("#modify-submit1").removeClass("d-none");
 			$("#delete-submit1").removeClass("d-none");
+			$('#addFileInputContainer1').removeClass("d-none");
+			$('.removeFileCheckbox').removeClass('d-none');
 		});
 		
 		$("#delete-submit1").click(function(e) {
@@ -296,7 +299,7 @@
 					</div>
 				</c:if>
 				
-				<form id="form1" action="${appRoot }/board/modify" method="post">
+				<form id="form1" action="${appRoot }/board/modify" method="post" enctype="multipart/form-data">
 					<input type="hidden" name="id" value="${board.id }"/>
 					
 					<div>
@@ -313,14 +316,33 @@
 					</div>
 					
 					
-						파일
-						<%-- <img src="file:///C:/imgtmp/board/${board.id }/${board.fileName }" alt="" /> --%>
-						<c:forEach items="${board.fileName }" var="file">
-							<div>
-								<img src="${imageUrl }/board/${board.id }/${file }" alt="" />
+					파일
+					<%-- <img src="file:///C:/imgtmp/board/${board.id }/${board.fileName }" alt="" /> --%>
+					<c:forEach items="${board.fileName }" var="file">
+						<%
+						String file = (String)pageContext.getAttribute("file");
+						String encodedFileName = URLEncoder.encode(file, "utf-8");
+						pageContext.setAttribute("encodedFileName", encodedFileName);
+						%>
+						<div class="row">
+							<div class="col-1">
+								<div class="d-none removeFileCheckbox">
+									삭제 <br />
+									<input type="checkbox" name="removeFileList" value="${file }"/>
+								</div>
 							</div>
-						</c:forEach>
+							<div class="col-11">
+								<div>
+									<img class="img-fluid" src="${imageUrl }/board/${board.id }/${encodedFileName }" alt="" />
+								</div>
+							</div>
+						</div>
+					</c:forEach>
 						
+					<div id="addFileInputContainer1"  class="d-none">
+						파일 추가 : 
+						<input type="file" multiple="multiple" name="addFileList" />
+					</div>
 					
 					
 					<div>

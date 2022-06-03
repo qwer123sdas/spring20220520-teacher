@@ -35,6 +35,9 @@ public interface BoardMapper {
 	// 여러 파일 리스트 가져오기
 	List<String> selectFileNameByBoard(int boardId);
 
+	// 특정 파일만 삭제하기
+	void deleteFileByBoardAndFileName(@Param("boardId")int id, @Param("fileName")String fileName);
+
 	
 	// 검색
 	//List<BoardDto> listBoardByKeyword(String keyword);

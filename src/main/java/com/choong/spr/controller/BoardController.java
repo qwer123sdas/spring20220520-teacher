@@ -94,12 +94,16 @@ public class BoardController {
 	}
 	
 	@PostMapping("modify")
-	public String modify(BoardDto dto, Principal principal, RedirectAttributes rttr) {
+	public String modify(BoardDto dto, 
+							MultipartFile[] addFileList,
+							@RequestParam(name = "removeFileList", required = false)ArrayList<String> removeFileList,
+							Principal principal, 
+							RedirectAttributes rttr) {
 		BoardDto oldBoard = service.getBoardById(dto.getId());
 		
 		if(oldBoard.getMemberId().equals(principal.getName())) {
-			
-			boolean success = service.updateBoard(dto);
+			// 파일 내용 수정 + 파일 추가 업로드 + 이미 있는 파일 삭제
+			boolean success = service.updateBoard(dto, addFileList, removeFileList);
 			
 			if (success) {
 				rttr.addFlashAttribute("message", "글이 수정되었습니다.");
