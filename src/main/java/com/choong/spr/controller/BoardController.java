@@ -31,8 +31,8 @@ public class BoardController {
 
 	@RequestMapping("list")
 	public void list(@RequestParam(name="keyword", defaultValue = "")String keyword, 
-			@RequestParam(name="type", defaultValue = "") String type,
-			Model model) {
+					@RequestParam(name="type", defaultValue = "") String type,
+					Model model) {
 		List<BoardDto> list = service.listBoard(type, keyword);
 		model.addAttribute("boardList", list);
 	}
