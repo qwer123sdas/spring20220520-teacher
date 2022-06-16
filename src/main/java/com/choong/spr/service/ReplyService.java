@@ -17,14 +17,18 @@ public class ReplyService{
 	@Autowired
 	private ReplyMapper mapper;
 	
-	public boolean insertReply(ReplyDto dto) {
-//		dto.setInserted(LocalDateTime.now());
-		return mapper.insertReply(dto) == 1;
-	}
-
 	public List<ReplyDto> getReplyByBoardId(int boardId) {
 		// 로그인 한 사람 없을 때
 		return mapper.selectAllBoardId(boardId, null);
+	}
+	// 로그인시 댓글 여부
+	public List<ReplyDto> getReplyWithOwnByBoardId(int boardId, String memberId) {
+		return mapper.selectAllBoardId(boardId, memberId);
+	}
+	
+	public boolean insertReply(ReplyDto dto) {
+//		dto.setInserted(LocalDateTime.now());
+		return mapper.insertReply(dto) == 1;
 	}
 
 	public boolean updateReply(ReplyDto dto, Principal principal) {
@@ -47,10 +51,6 @@ public class ReplyService{
 		}else {
 			return false;
 		}
-	}
-	// 로그인시 댓글 여부
-	public List<ReplyDto> getReplyWithOwnByBoardId(int boardId, String memberId) {
-		return mapper.selectAllBoardId(boardId, memberId);
 	}
 
 }
